@@ -5,20 +5,35 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "test:worker": "tsx --test tests/optimization-workflow.test.ts"
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.93",
     "@clerk/nextjs": "^7.9.13",
+    "@prisma/client": "6.12.0",
+    "@trigger.dev/sdk": "^4.7.3",
+    "@vercel/blob": "^2.8.1",
+    "ai": "^7.0.136",
     "next": "^16.4.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "prisma": "6.12.0",
     "tailwindcss": "^4.0.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.0.0"
+  },
+  "overrides": {
+    "socket.io-client": "^4.8.4",
+    "ws": "^8.22.0"
   }
 }

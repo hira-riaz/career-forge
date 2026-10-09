@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { UserButton } from "@clerk/nextjs";
 import { useState, type ReactNode } from "react";
 
 interface DashboardShellProps {
@@ -82,25 +83,17 @@ export function DashboardShell({ children }: DashboardShellProps) {
             </div>
           </div>
 
-          <button
-            type="button"
-            aria-label="System profile"
-            className="justify-self-end rounded-[var(--radius-panel)] border border-[var(--border-faint)] bg-[var(--surface-card)] px-3 py-2 text-left transition hover:border-[var(--text-muted)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-forge)]"
-          >
-            <span className="flex items-center gap-2">
-              <span className="flex size-7 items-center justify-center rounded-[var(--radius-control)] border border-[var(--border-faint)] font-mono text-[10px] text-[var(--accent-forge)]">
-                SYS
+          <div className="flex items-center justify-self-end gap-3">
+            <span className="hidden text-right sm:block">
+              <span className="block font-mono text-xs text-[var(--text-bright)]">
+                System Profile
               </span>
-              <span className="hidden sm:block">
-                <span className="block font-mono text-xs text-[var(--text-bright)]">
-                  System Profile
-                </span>
-                <span className="block text-[10px] text-[var(--text-muted)]">
-                  Workspace settings
-                </span>
+              <span className="block text-[10px] text-[var(--text-muted)]">
+                Workspace settings
               </span>
             </span>
-          </button>
+            <UserButton />
+          </div>
         </div>
 
         {isNavigationOpen && (

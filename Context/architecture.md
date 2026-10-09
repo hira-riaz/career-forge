@@ -1,13 +1,13 @@
 # System Architecture
 
 ## Production Tech Stack
-- **Framework Core:** Next.js (App Router Blueprint) & React 19 Production baseline.
-- **Identity Layer:** Clerk Next.js Authentication SDK configured with custom dark variants.
+- **Framework Core:** Next.js 16 App Router & React 19 production baseline.
+- **Identity Layer:** Clerk Next.js SDK (`@clerk/nextjs`) with a root `ClerkProvider` and `clerkMiddleware` configured in the Next.js 16 `proxy.ts` entry point. Application routes are protected by default; only `/sign-in` and `/sign-up` are public.
 - **State Broker:** React Context Providers managing shared document models and mutation events.
 - **Relational Layer:** Postgres database clusters accessed through Prisma ORM schemas.
-- **Durable Compute:** Trigger.dev background workers managing complex AI transformation loops.
-- **Object Storage:** Vercel Blob private authenticated structural snapshot drives.
-- **AI Core:** Google Gemini Pro / Flash 2.5 generative text engine networks.
+- **Durable Compute:** Trigger.dev task workers with typed realtime status streams and Prisma-persisted state transitions.
+- **Object Storage:** Vercel Blob private authenticated snapshot/result storage; Postgres stores URL references rather than document content.
+- **AI Core:** Vercel AI SDK with the Google provider and Gemini 2.5 Flash structured tool calling, validated with Zod.
 
 ## Data Persistence Blueprint
 To guarantee blazing fast document updates and prevent relational table bloating under heavy text processing volumes, CareerForge enforces a strict hybrid persistence architecture:
@@ -17,4 +17,6 @@ To guarantee blazing fast document updates and prevent relational table bloating
 
 ## System Scoping Boundaries
 - **Server-Side Security Enforcement:** All validation logic and ownership permissions evaluate directly at the API route handler boundary before execution hooks call the Postgres or Blob layer.
+- **Identity Enforcement:** Clerk proxy middleware protects application routes by default. Server layouts and route handlers must verify the authenticated user before rendering protected client components or accessing user-owned data.
 - **Isolated Generative Workers:** Long-running AI processing calls must never run within standard Next.js request loops. Next.js API endpoints strictly validate data, fire durable background tasks inside Trigger.dev, and return immediate task IDs to avoid unexpected client timeouts.
+- **Worker Persistence:** Optimization status/signal changes are written atomically to the task row before realtime events are emitted. Completed resume documents are stored in private Vercel Blob storage, and only the returned blob URL is persisted in Postgres.

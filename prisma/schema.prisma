@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OptimizationTaskStatus {
+  PENDING
+  COMPUTING
+  SUCCESS
+  FAILED
+}
+
+enum OptimizationTaskSignal {
+  STARTING
+  OPTIMIZING_RESUME
+  FINALIZING_METADATA
+  COMPLETE
+  FAILED
+}
+
+model UserProfile {
+  id                       String             @id @default(cuid())
+  ownerId                  String             @unique
+  documentTextRecordLink   String?
+  experienceIndex          String[]           @default([])
+  structuralMetadata       String[]           @default([])
+  optimizationTasks        OptimizationTask[]
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+
+  @@index([ownerId, createdAt(sort: Desc)])
+}
+
+model OptimizationTask {
+  id              String                 @id @default(cuid())
+  status          OptimizationTaskStatus @default(PENDING)
+  currentSignal   OptimizationTaskSignal?
+  executionError  String?                @db.Text
+  resultBlobUrl   String?
+  projectId       String
+  runId           String?
+  project         UserProfile            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  @@index([projectId, createdAt(sort: Desc)])
+  @@index([runId])
+}
